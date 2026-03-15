@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Superpowers — 为你的编码智能体赋予超能力</title>
+  <meta name="description" content="一个完整的软件开发工作流程，基于一组可组合的技能和初始指令构建，确保你的编码智能体能够正确使用它们。">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;900&family=Sora:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Sora', 'sans-serif'],
+            body: ['"Noto Sans SC"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    :root {
+      --c-bg: #06080f;
+      --c-surface: #0c1120;
+      --c-surface-2: #111827;
+      --c-border: rgba(99,102,241,0.08);
+      --c-border-hover: rgba(99,102,241,0.22);
+      --c-text: #c7d4fe;
+      --c-text-muted: rgba(199,212,254,0.45);
+      --c-text-dim: rgba(199,212,254,0.3);
+      --c-accent: #6366f1;
+      --c-accent-light: #a5b4fc;
+      --c-emerald: #34d399;
+      --c-amber: #fbbf24;
+      --c-rose: #fb7185;
+      --c-cyan: #22d3ee;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Noto Sans SC', sans-serif;
+      background: var(--c-bg);
+      color: var(--c-text);
+      overflow-x: hidden;
+    }
+
+    ::selection {
+      background: rgba(99,102,241,0.3);
+      color: #fff;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--c-bg); }
+    ::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.25); border-radius: 8px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(99,102,241,0.45); }
+
+    /* Typography */
+    .gradient-text {
+      background: linear-gradient(135deg, #a5b4fc 0%, #6366f1 35%, #34d399 80%, #22d3ee 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .gradient-text-warm {
+      background: linear-gradient(135deg, #fbbf24, #f43f5e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .gradient-text-emerald {
+      background: linear-gradient(135deg, #34d399, #22d3ee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Glass */
+    .glass {
+      background: rgba(12,17,32,0.7);
+      backdrop-filter: blur(20px) saturate(1.4);
+      -webkit-backdrop-filter: blur(20px) saturate(1.4);
+      border: 1px solid var(--c-border);
+    }
+    .glass-card {
+      background: rgba(12,17,32,0.55);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--c-border);
+      border-radius: 20px;
+      transition: border-color 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease;
+    }
+    .glass-card:hover {
+      border-color: var(--c-border-hover);
+      box-shadow: 0 8px 48px -12px rgba(99,102,241,0.1), 0 0 0 1px rgba(99,102,241,0.06);
+      transform: translateY(-3px);
+    }
+
+    /* Hero background */
+    .hero-canvas {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 90% 70% at 50% -20%, rgba(99,102,241,0.2) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 60% at 85% 30%, rgba(34,211,153,0.08) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 50% at 10% 70%, rgba(251,191,36,0.05) 0%, transparent 50%),
+        radial-gradient(ellipse 60% 40% at 60% 90%, rgba(244,63,94,0.04) 0%, transparent 50%);
+    }
+    .hero-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(99,102,241,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99,102,241,0.04) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 70%);
+      -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 70%);
+    }
+
+    /* Floating particles */
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: float-particle linear infinite;
+    }
+    @keyframes float-particle {
+      0% { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-100vh) translateX(40px) scale(0.3); opacity: 0; }
+    }
+
+    /* Pulse dot */
+    .pulse-dot {
+      animation: pulse-glow 2.5s ease-in-out infinite;
+    }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 3px var(--c-emerald); }
+      50% { box-shadow: 0 0 14px var(--c-emerald), 0 0 28px rgba(52,211,153,0.2); }
+    }
+
+    /* Scroll-triggered animations */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Hero entrance */
+    @keyframes hero-fade {
+      from { opacity: 0; transform: translateY(32px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .hero-anim { animation: hero-fade 0.9s cubic-bezier(0.16,1,0.3,1) forwards; }
+    .hero-d1 { animation-delay: 0.05s; opacity: 0; }
+    .hero-d2 { animation-delay: 0.15s; opacity: 0; }
+    .hero-d3 { animation-delay: 0.25s; opacity: 0; }
+    .hero-d4 { animation-delay: 0.35s; opacity: 0; }
+    .hero-d5 { animation-delay: 0.5s; opacity: 0; }
+
+    /* Nav link underline */
+    .nav-link { position: relative; }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 50%; width: 0; height: 1.5px;
+      background: var(--c-accent);
+      transition: width 0.3s ease, left 0.3s ease;
+      border-radius: 1px;
+    }
+    .nav-link:hover::after { width: 100%; left: 0; }
+
+    /* Step timeline */
+    .step-item { position: relative; }
+    .step-item::before {
+      content: '';
+      position: absolute;
+      left: 23px;
+      top: 52px;
+      bottom: -20px;
+      width: 1px;
+      background: linear-gradient(180deg, rgba(99,102,241,0.3) 0%, rgba(99,102,241,0.03) 100%);
+    }
+    .step-item:last-child::before { display: none; }
+
+    /* Code block */
+    .code-box {
+      background: rgba(6,8,15,0.85);
+      border: 1px solid rgba(99,102,241,0.08);
+      border-radius: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    .code-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(99,102,241,0.15), transparent);
+    }
+    .copy-btn {
+      position: absolute;
+      top: 10px; right: 10px;
+      background: rgba(99,102,241,0.1);
+      border: 1px solid rgba(99,102,241,0.15);
+      border-radius: 8px;
+      padding: 5px 7px;
+      cursor: pointer;
+      color: var(--c-text-muted);
+      transition: all 0.2s;
+      opacity: 0;
+    }
+    .code-box:hover .copy-btn { opacity: 1; }
+    .copy-btn:hover {
+      background: rgba(99,102,241,0.2);
+      color: var(--c-accent-light);
+    }
+
+    /* Skill tag */
+    .skill-tag {
+      font-size: 0.65rem;
+      letter-spacing: 0.06em;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    /* Platform icon ring */
+    .platform-icon {
+      width: 44px; height: 44px;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .platform-icon::after {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: inherit;
+      border: 1px solid currentColor;
+      opacity: 0.12;
+    }
+
+    /* Section divider */
+    .section-glow {
+      position: relative;
+    }
+    .section-glow::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%;
+      width: 200px; height: 1px;
+      transform: translateX(-50%);
+      background: linear-gradient(90deg, transparent, rgba(99,102,241,0.2), transparent);
+    }
+
+    /* Philosophy card glow on hover */
+    .philo-card {
+      position: relative;
+      overflow: hidden;
+    }
+    .philo-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .philo-card:hover::after { opacity: 1; }
+    .philo-glow-green::after { background: radial-gradient(circle at 50% 30%, rgba(52,211,153,0.06) 0%, transparent 70%); }
+    .philo-glow-indigo::after { background: radial-gradient(circle at 50% 30%, rgba(99,102,241,0.06) 0%, transparent 70%); }
+    .philo-glow-amber::after { background: radial-gradient(circle at 50% 30%, rgba(251,191,36,0.06) 0%, transparent 70%); }
+    .philo-glow-rose::after { background: radial-gradient(circle at 50% 30%, rgba(244,63,94,0.06) 0%, transparent 70%); }
+
+    /* Feature highlight strip */
+    .feature-strip {
+      display: flex;
+      gap: 32px;
+      animation: scroll-strip 30s linear infinite;
+    }
+    @keyframes scroll-strip {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+  </style>
+</head>
+<body class="min-h-screen antialiased">
+
+  <!-- ═══════════════ Navigation ═══════════════ -->
+  <nav id="nav" class="glass fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+    <div class="max-w-6xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
+      <a href="#" class="flex items-center gap-2.5 group">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500/20 to-cyan-500/10 flex items-center justify-center border border-indigo-500/15 group-hover:border-indigo-500/30 transition-colors">
+          <svg class="w-4.5 h-4.5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+        </div>
+        <span class="font-display font-bold text-lg tracking-tight text-white">Superpowers</span>
+      </a>
+      <div class="hidden md:flex items-center gap-7 text-[0.84rem]">
+        <a href="#how" class="nav-link text-white/50 hover:text-white transition-colors">工作原理</a>
+        <a href="#workflow" class="nav-link text-white/50 hover:text-white transition-colors">工作流程</a>
+        <a href="#install" class="nav-link text-white/50 hover:text-white transition-colors">安装</a>
+        <a href="#skills" class="nav-link text-white/50 hover:text-white transition-colors">技能库</a>
+        <a href="#philosophy" class="nav-link text-white/50 hover:text-white transition-colors">理念</a>
+        <a href="https://github.com/obra/superpowers" target="_blank" rel="noopener"
+           class="ml-1 flex items-center gap-1.5 px-4 py-2 rounded-xl border border-white/10 text-white/70 hover:text-white hover:border-white/20 hover:bg-white/[0.03] transition-all text-sm">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
+        </a>
+      </div>
+      <button id="mob-btn" class="md:hidden text-white/60 hover:text-white p-2 -mr-2" aria-label="菜单">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+    <div id="mob-menu" class="hidden md:hidden border-t border-white/5 px-6 py-5 space-y-4">
+      <a href="#how" class="block text-sm text-white/60 hover:text-white">工作原理</a>
+      <a href="#workflow" class="block text-sm text-white/60 hover:text-white">工作流程</a>
+      <a href="#install" class="block text-sm text-white/60 hover:text-white">安装</a>
+      <a href="#skills" class="block text-sm text-white/60 hover:text-white">技能库</a>
+      <a href="#philosophy" class="block text-sm text-white/60 hover:text-white">理念</a>
+      <a href="https://github.com/obra/superpowers" target="_blank" class="block text-sm text-indigo-400">GitHub →</a>
+    </div>
+  </nav>
+
+  <!-- ═══════════════ Hero ═══════════════ -->
+  <section class="relative min-h-[100vh] flex items-center justify-center px-5 sm:px-8 pt-16 overflow-hidden">
+    <div class="hero-canvas"></div>
+    <div class="hero-grid"></div>
+    <!-- Floating particles -->
+    <div class="particle w-1 h-1 bg-indigo-400/40" style="left:12%;bottom:-10%;animation-duration:18s"></div>
+    <div class="particle w-1.5 h-1.5 bg-emerald-400/30" style="left:28%;bottom:-15%;animation-duration:22s;animation-delay:3s"></div>
+    <div class="particle w-1 h-1 bg-cyan-400/25" style="left:55%;bottom:-8%;animation-duration:20s;animation-delay:6s"></div>
+    <div class="particle w-1.5 h-1.5 bg-indigo-400/30" style="left:72%;bottom:-12%;animation-duration:24s;animation-delay:2s"></div>
+    <div class="particle w-1 h-1 bg-amber-400/20" style="left:88%;bottom:-10%;animation-duration:19s;animation-delay:8s"></div>
+    <div class="particle w-0.5 h-0.5 bg-rose-400/25" style="left:40%;bottom:-5%;animation-duration:16s;animation-delay:5s"></div>
+
+    <div class="relative z-10 max-w-4xl mx-auto text-center py-20 md:py-28">
+      <div class="hero-anim hero-d1">
+        <span class="inline-flex items-center gap-2.5 px-5 py-2 rounded-full glass text-xs font-mono tracking-wide mb-10" style="color:var(--c-accent-light)">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 pulse-dot"></span>
+          开源 · MIT 许可证 · 由 Jesse 维护
+        </span>
+      </div>
+
+      <h1 class="hero-anim hero-d2 font-display font-extrabold text-[2.6rem] sm:text-6xl md:text-7xl lg:text-8xl !leading-[1.1] tracking-tight mb-7">
+        为编码智能体<br>
+        赋予<span class="gradient-text">超能力</span>
+      </h1>
+
+      <p class="hero-anim hero-d3 text-base sm:text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-4" style="color:var(--c-text-muted)">
+        完整的软件开发工作流程，基于可组合的"技能"与初始指令构建。
+      </p>
+      <p class="hero-anim hero-d3 text-sm md:text-base max-w-xl mx-auto leading-relaxed mb-12" style="color:var(--c-text-dim)">
+        你的智能体不会直接跳进代码——它会退后一步，梳理规范、制定计划，然后以子智能体驱动的方式自主执行，同时保持红/绿 TDD 与严格的代码审查。
+      </p>
+
+      <div class="hero-anim hero-d4 flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="#install"
+           class="w-full sm:w-auto px-9 py-4 rounded-2xl font-display font-semibold text-white text-[0.92rem] transition-all
+                  bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400
+                  shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/35 hover:-translate-y-0.5 text-center">
+          开始安装
+        </a>
+        <a href="#how"
+           class="w-full sm:w-auto px-9 py-4 rounded-2xl font-display font-medium text-white/70 hover:text-white text-[0.92rem] transition-all
+                  border border-white/10 hover:border-white/20 hover:bg-white/[0.03] text-center">
+          了解工作原理 →
+        </a>
+      </div>
+
+      <!-- Keyword strip -->
+      <div class="hero-anim hero-d5 mt-16 flex flex-wrap items-center justify-center gap-3 text-xs font-mono" style="color:var(--c-text-dim)">
+        <span class="px-3 py-1.5 rounded-lg border border-white/5 bg-white/[0.02]">🧠 头脑风暴</span>
+        <span class="px-3 py-1.5 rounded-lg border border-white/5 bg-white/[0.02]">📋 自动规划</span>
+        <span class="px-3 py-1.5 rounded-lg border border-white/5 bg-white/[0.02]">🤖 子智能体</span>
+        <span class="px-3 py-1.5 rounded-lg border border-white/5 bg-white/[0.02]">🧪 TDD</span>
+        <span class="px-3 py-1.5 rounded-lg border border-white/5 bg-white/[0.02]">🔍 代码审查</span>
+        <span class="px-3 py-1.5 rounded-lg border border-white/5 bg-white/[0.02]">🐛 系统调试</span>
+      </div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-40">
+      <span class="text-[0.65rem] font-mono tracking-widest uppercase" style="color:var(--c-text-dim)">向下滚动</span>
+      <div class="w-5 h-8 rounded-full border border-white/15 flex items-start justify-center p-1">
+        <div class="w-1 h-2 rounded-full bg-indigo-400/60 animate-bounce"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ How it works (narrative) ═══════════════ -->
+  <section id="how" class="py-24 md:py-32 px-5 sm:px-8 section-glow">
+    <div class="max-w-3xl mx-auto">
+      <div class="text-center mb-14 reveal">
+        <span class="text-[0.7rem] font-mono tracking-[0.2em] uppercase" style="color:var(--c-accent-light)">How It Works</span>
+        <h2 class="font-display font-bold text-3xl md:text-4xl mt-4 text-white">它如何改变你的开发流程</h2>
+      </div>
+
+      <div class="space-y-8">
+        <div class="reveal glass-card p-8 md:p-10">
+          <div class="flex items-start gap-5">
+            <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/15 flex items-center justify-center mt-1 text-xl">💡</div>
+            <div>
+              <h3 class="font-display font-semibold text-white text-lg mb-3">从对话开始，而非代码</h3>
+              <p class="text-sm leading-[1.85]" style="color:var(--c-text-muted)">
+                当你启动编码智能体时，它<strong class="text-white/80">不会</strong>直接跳进去编写代码。相反，它会退后一步，通过苏格拉底式对话询问你真正想做什么。然后以足够简短的块形式将设计方案展示给你，确保你能真正阅读和消化每一部分。
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal glass-card p-8 md:p-10">
+          <div class="flex items-start gap-5">
+            <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/15 flex items-center justify-center mt-1 text-xl">📐</div>
+            <div>
+              <h3 class="font-display font-semibold text-white text-lg mb-3">制定精确到文件路径的计划</h3>
+              <p class="text-sm leading-[1.85]" style="color:var(--c-text-muted)">
+                在你确认设计后，智能体会制定一个足够清晰的实现计划——即使是一位热情但缺乏判断力、没有项目背景且厌恶测试的初级工程师也能遵循。每个任务 2-5 分钟，包含确切的文件路径、完整代码与验证步骤，强调 <strong class="text-white/80">TDD</strong>、<strong class="text-white/80">YAGNI</strong> 和 <strong class="text-white/80">DRY</strong> 原则。
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal glass-card p-8 md:p-10">
+          <div class="flex items-start gap-5">
+            <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/15 flex items-center justify-center mt-1 text-xl">🚀</div>
+            <div>
+              <h3 class="font-display font-semibold text-white text-lg mb-3">子智能体自主执行数小时</h3>
+              <p class="text-sm leading-[1.85]" style="color:var(--c-text-muted)">
+                一旦你说"开始"，系统启动<strong class="text-white/80">子智能体驱动开发</strong>流程。每个工程任务由独立子智能体完成，经过规范合规性与代码质量的两阶段审查后才能继续推进。Claude 通常能够自主工作数小时而不会偏离你制定的计划。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class="reveal text-center mt-10 text-sm" style="color:var(--c-text-dim)">
+        还有更多内容，但这就是系统的核心。由于技能会自动触发，你不需要做任何特殊的事情。
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══════════════ 7-Step Workflow ═══════════════ -->
+  <section id="workflow" class="py-24 md:py-32 px-5 sm:px-8 section-glow">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-16 reveal">
+        <span class="text-[0.7rem] font-mono tracking-[0.2em] uppercase" style="color:var(--c-accent-light)">Workflow</span>
+        <h2 class="font-display font-bold text-3xl md:text-4xl mt-4 text-white">七步工作流程</h2>
+        <p class="mt-4 max-w-lg mx-auto text-sm leading-relaxed" style="color:var(--c-text-muted)">从头脑风暴到分支合并的完整闭环，智能体在每步前自动检查并激活相关技能。</p>
+      </div>
+
+      <div class="space-y-6 max-w-3xl mx-auto">
+        <!-- S1 -->
+        <div class="reveal step-item flex gap-5">
+          <div class="flex-shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500/15 to-amber-500/5 border border-amber-500/15 flex items-center justify-center mt-0.5">
+            <span class="font-display font-bold text-amber-400 text-sm">01</span>
+          </div>
+          <div class="glass-card p-6 flex-1">
+            <div class="flex flex-wrap items-center gap-2.5 mb-2.5">
+              <h3 class="font-display font-semibold text-white">头脑风暴</h3>
+              <span class="skill-tag bg-amber-500/12 text-amber-400 border border-amber-500/15">brainstorming</span>
+            </div>
+            <p class="text-[0.82rem] leading-[1.8]" style="color:var(--c-text-muted)">在编写代码前激活。通过提问完善粗略想法，探索替代方案，分段展示设计以进行验证，保存设计文档。</p>
+          </div>
+        </div>
+        <!-- S2 -->
+        <div class="reveal step-item flex gap-5">
+          <div class="flex-shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500/15 to-emerald-500/5 border border-emerald-500/15 flex items-center justify-center mt-0.5">
+            <span class="font-display font-bold text-emerald-400 text-sm">02</span>
+          </div>
+          <div class="glass-card p-6 flex-1">
+            <div class="flex flex-wrap items-center gap-2.5 mb-2.5">
+              <h3 class="font-display font-semibold text-white">Git Worktrees</h3>
+              <span class="skill-tag bg-emerald-500/12 text-emerald-400 border border-emerald-500/15">using-git-worktrees</span>
+            </div>
+            <p class="text-[0.82rem] leading-[1.8]" style="color:var(--c-text-muted)">设计批准后激活。在新分支上创建隔离的工作空间，运行项目设置，验证干净的测试基线。</p>
+          </div>
+        </div>
+        <!-- S3 -->
+        <div class="reveal step-item flex gap-5">
+          <div class="flex-shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500/15 to-indigo-500/5 border border-indigo-500/15 flex items-center justify-center mt-0.5">
+            <span class="font-display font-bold text-indigo-400 text-sm">03</span>
+          </div>
+          <div class="glass-card p-6 flex-1">
+            <div class="flex flex-wrap items-center gap-2.5 mb-2.5">
+              <h3 class="font-display font-semibold text-white">编写计划</h3>
+              <span class="skill-tag bg-indigo-500/12 text-indigo-400 border border-indigo-500/15">writing-plans</span>
+            </div>
+            <p class="text-[0.82rem] leading-[1.8]" style="color:var(--c-text-muted)">有批准的设计后激活。将工作分解为小任务（每个 2-5 分钟），每个任务都有确切的文件路径、完整代码和验证步骤。</p>
+          </div>
+        </div>
+        <!-- S4 -->
+        <div class="reveal step-item flex gap-5">
+          <div class="flex-shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-br from-rose-500/15 to-rose-500/5 border border-rose-500/15 flex items-center justify-center mt-0.5">
+            <span class="font-display font-bold text-rose-400 text-sm">04</span>
+          </div>
+          <div class="glass-card p-6 flex-1">
+            <div class="flex flex-wrap items-center gap-2.5 mb-2.5">
+              <h3 class="font-display font-semibold text-white">子智能体驱动开发</h3>
+              <span class="skill-tag bg-rose-500/12 text-rose-400 border border-rose-500/15">subagent-driven</span>
+            </div>
+            <p class="text-[0.82rem] leading-[1.8]" style="color:var(--c-text-muted)">每个任务分派新的子智能体，进行两阶段审查——规范合规性检查与代码质量审查。或带人工检查点的批量执行。</p>
+          </div>
+        </div>
+        <!-- S5 -->
+        <div class="reveal step-item flex gap-5">
+          <div class="flex-shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500/15 to-cyan-500/5 border border-emerald-500/15 flex items-center justify-center mt-0.5">
+            <span class="font-display font-bold text-emerald-400 text-sm">05</span>
+          </div>
+          <div class="glass-card p-6 flex-1">
+            <div class="flex flex-wrap items-center gap-2.5 mb-2.5">
+              <h3 class="font-display font-semibold text-white">测试驱动开发</h3>
+              <span class="skill-tag bg-emerald-500/12 text-emerald-400 border border-emerald-500/15">TDD</span>
+            </div>
+            <p class="text-[0.82rem] leading-[1.8]" style="color:var(--c-text-muted)">
+              强制执行 <span class="text-rose-400 font-medium">RED</span> → <span class="text-emerald-400 font-medium">GREEN</span> → <span class="text-indigo-400 font-medium">REFACTOR</span>：编写失败测试，看着它失败，编写最小代码，看着它通过，提交。
+            </p>
+          </div>
+        </div>
+        <!-- S6 -->
+        <div class="reveal step-item flex gap-5">
+          <div class="flex-shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500/15 to-amber-500/5 border border-amber-500/15 flex items-center justify-center mt-0.5">
+            <span class="font-display font-bold text-amber-400 text-sm">06</span>
+          </div>
+          <div class="glass-card p-6 flex-1">
+            <div class="flex flex-wrap items-center gap-2.5 mb-2.5">
+              <h3 class="font-display font-semibold text-white">代码审查</h3>
+              <span class="skill-tag bg-amber-500/12 text-amber-400 border border-amber-500/15">code-review</span>
+            </div>
+            <p class="text-[0.82rem] leading-[1.8]" style="color:var(--c-text-muted)">任务之间激活。根据计划进行审查，按严重程度报告问题。关键问题会阻止进度。</p>
+          </div>
+        </div>
+        <!-- S7 -->
+        <div class="reveal step-item flex gap-5">
+          <div class="flex-shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500/15 to-cyan-500/5 border border-indigo-500/15 flex items-center justify-center mt-0.5">
+            <span class="font-display font-bold text-indigo-400 text-sm">07</span>
+          </div>
+          <div class="glass-card p-6 flex-1">
+            <div class="flex flex-wrap items-center gap-2.5 mb-2.5">
+              <h3 class="font-display font-semibold text-white">完成分支</h3>
+              <span class="skill-tag bg-indigo-500/12 text-indigo-400 border border-indigo-500/15">finishing-branch</span>
+            </div>
+            <p class="text-[0.82rem] leading-[1.8]" style="color:var(--c-text-muted)">任务完成时激活。验证测试，展示选项（合并 / PR / 保留 / 丢弃），清理 worktree。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal mt-12 text-center">
+        <div class="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-2xl glass text-[0.82rem]" style="color:var(--c-text-muted)">
+          <svg class="w-4 h-4 text-indigo-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          智能体在任何任务前都会检查相关技能 — <strong class="text-white/70">强制性工作流程</strong>，而非建议
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ Installation ═══════════════ -->
+  <section id="install" class="py-24 md:py-32 px-5 sm:px-8 section-glow">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-16 reveal">
+        <span class="text-[0.7rem] font-mono tracking-[0.2em] uppercase" style="color:var(--c-accent-light)">Installation</span>
+        <h2 class="font-display font-bold text-3xl md:text-4xl mt-4 text-white">安装指南</h2>
+        <p class="mt-4 max-w-lg mx-auto text-sm leading-relaxed" style="color:var(--c-text-muted)">支持六大平台，选择你的编码工具一键安装</p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+        <!-- Claude Official -->
+        <div class="reveal glass-card p-6 relative overflow-hidden">
+          <div class="absolute top-3 right-3">
+            <span class="text-[0.6rem] font-mono px-2 py-1 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/15">推荐</span>
+          </div>
+          <div class="flex items-center gap-3.5 mb-5">
+            <div class="platform-icon bg-amber-500/10 text-amber-400">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+            </div>
+            <div>
+              <h3 class="font-display font-semibold text-white text-[0.95rem]">Claude Code 官方</h3>
+              <p class="text-[0.7rem] mt-0.5" style="color:var(--c-text-dim)">官方插件市场</p>
+            </div>
+          </div>
+          <div class="code-box p-4 font-mono text-xs leading-relaxed">
+            <button class="copy-btn" onclick="copyCode(this)" aria-label="复制"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg></button>
+            <code><span style="color:var(--c-text-dim)"># 一键安装</span><br><span class="text-indigo-400">/plugin install</span> <span class="text-emerald-400">superpowers@claude-plugins-official</span></code>
+          </div>
+        </div>
+
+        <!-- Claude Code Marketplace -->
+        <div class="reveal glass-card p-6">
+          <div class="flex items-center gap-3.5 mb-5">
+            <div class="platform-icon bg-indigo-500/10 text-indigo-400">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            </div>
+            <div>
+              <h3 class="font-display font-semibold text-white text-[0.95rem]">Claude Code</h3>
+              <p class="text-[0.7rem] mt-0.5" style="color:var(--c-text-dim)">社区市场</p>
+            </div>
+          </div>
+          <div class="code-box p-4 font-mono text-xs leading-relaxed space-y-3">
+            <button class="copy-btn" onclick="copyCode(this)" aria-label="复制"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg></button>
+            <code>
+              <div><span style="color:var(--c-text-dim)"># 注册市场</span><br><span class="text-indigo-400">/plugin marketplace add</span> <span class="text-emerald-400">obra/superpowers-marketplace</span></div>
+              <div><span style="color:var(--c-text-dim)"># 安装</span><br><span class="text-indigo-400">/plugin install</span> <span class="text-emerald-400">superpowers@superpowers-marketplace</span></div>
+            </code>
+          </div>
+        </div>
+
+        <!-- Cursor -->
+        <div class="reveal glass-card p-6">
+          <div class="flex items-center gap-3.5 mb-5">
+            <div class="platform-icon bg-emerald-500/10 text-emerald-400">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/></svg>
+            </div>
+            <div>
+              <h3 class="font-display font-semibold text-white text-[0.95rem]">Cursor</h3>
+              <p class="text-[0.7rem] mt-0.5" style="color:var(--c-text-dim)">Agent 聊天</p>
+            </div>
+          </div>
+          <div class="code-box p-4 font-mono text-xs leading-relaxed">
+            <button class="copy-btn" onclick="copyCode(this)" aria-label="复制"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg></button>
+            <code><span style="color:var(--c-text-dim)"># Agent 聊天中</span><br><span class="text-indigo-400">/add-plugin</span> <span class="text-emerald-400">superpowers</span></code>
+          </div>
+        </div>
+
+        <!-- Codex -->
+        <div class="reveal glass-card p-6">
+          <div class="flex items-center gap-3.5 mb-5">
+            <div class="platform-icon bg-rose-500/10 text-rose-400">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+            </div>
+            <div>
+              <h3 class="font-display font-semibold text-white text-[0.95rem]">Codex</h3>
+              <p class="text-[0.7rem] mt-0.5" style="color:var(--c-text-dim)">手动设置</p>
+            </div>
+          </div>
+          <div class="code-box p-4 font-mono text-[0.7rem] leading-relaxed">
+            <button class="copy-btn" onclick="copyCode(this)" aria-label="复制"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg></button>
+            <code><span style="color:var(--c-text-dim)"># 告诉 Codex 执行</span><br><span class="text-emerald-400 break-all">Fetch and follow instructions from https://raw.githubusercontent.com/obra/superpowers/refs/heads/main/.codex/INSTALL.md</span></code>
+          </div>
+        </div>
+
+        <!-- OpenCode -->
+        <div class="reveal glass-card p-6">
+          <div class="flex items-center gap-3.5 mb-5">
+            <div class="platform-icon bg-indigo-500/10 text-indigo-400">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
+            </div>
+            <div>
+              <h3 class="font-display font-semibold text-white text-[0.95rem]">OpenCode</h3>
+              <p class="text-[0.7rem] mt-0.5" style="color:var(--c-text-dim)">手动设置</p>
+            </div>
+          </div>
+          <div class="code-box p-4 font-mono text-[0.7rem] leading-relaxed">
+            <button class="copy-btn" onclick="copyCode(this)" aria-label="复制"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg></button>
+            <code><span style="color:var(--c-text-dim)"># 告诉 OpenCode 执行</span><br><span class="text-emerald-400 break-all">Fetch and follow instructions from https://raw.githubusercontent.com/obra/superpowers/refs/heads/main/.opencode/INSTALL.md</span></code>
+          </div>
+        </div>
+
+        <!-- Gemini CLI -->
+        <div class="reveal glass-card p-6">
+          <div class="flex items-center gap-3.5 mb-5">
+            <div class="platform-icon bg-amber-500/10 text-amber-400">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+            </div>
+            <div>
+              <h3 class="font-display font-semibold text-white text-[0.95rem]">Gemini CLI</h3>
+              <p class="text-[0.7rem] mt-0.5" style="color:var(--c-text-dim)">扩展安装</p>
+            </div>
+          </div>
+          <div class="code-box p-4 font-mono text-xs leading-relaxed space-y-3">
+            <button class="copy-btn" onclick="copyCode(this)" aria-label="复制"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg></button>
+            <code>
+              <div><span style="color:var(--c-text-dim)"># 安装</span><br><span class="text-indigo-400">gemini extensions install</span> <span class="text-emerald-400">https://github.com/obra/superpowers</span></div>
+              <div><span style="color:var(--c-text-dim)"># 更新</span><br><span class="text-indigo-400">gemini extensions update</span> <span class="text-emerald-400">superpowers</span></div>
+            </code>
+          </div>
+        </div>
+      </div>
+
+      <!-- Verify -->
+      <div class="reveal mt-10 glass-card p-7 max-w-2xl mx-auto">
+        <div class="flex items-start gap-4">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/12 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <svg class="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div>
+            <h4 class="font-display font-semibold text-white mb-1.5">验证安装</h4>
+            <p class="text-[0.82rem] leading-[1.8]" style="color:var(--c-text-muted)">
+              开始一个新会话，询问一些应该触发技能的内容（例如 "帮我规划这个功能" 或 "让我们调试这个问题"）。智能体应该自动调用相关的 Superpowers 技能。
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ Skills Library ═══════════════ -->
+  <section id="skills" class="py-24 md:py-32 px-5 sm:px-8 section-glow">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-16 reveal">
+        <span class="text-[0.7rem] font-mono tracking-[0.2em] uppercase" style="color:var(--c-accent-light)">Skills Library</span>
+        <h2 class="font-display font-bold text-3xl md:text-4xl mt-4 text-white">技能库</h2>
+        <p class="mt-4 max-w-lg mx-auto text-sm leading-relaxed" style="color:var(--c-text-muted)">可组合的技能模块，智能体根据上下文自动检测与调用</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-5">
+
+        <!-- Testing -->
+        <div class="reveal glass-card p-6">
+          <div class="flex items-center gap-3 mb-5">
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/12 flex items-center justify-center">
+              <svg class="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <h3 class="font-display font-semibold text-white">测试</h3>
+          </div>
+          <div class="p-4 rounded-xl" style="background:rgba(6,8,15,0.5)">
+            <div class="flex items-start gap-3">
+              <span class="skill-tag bg-emerald-500/12 text-emerald-400 border border-emerald-500/15 mt-0.5 flex-shrink-0">TDD</span>
+              <div>
+                <p class="text-[0.85rem] text-white font-medium">test-driven-development</p>
+                <p class="text-xs mt-1 leading-relaxed" style="color:var(--c-text-muted)">RED-GREEN-REFACTOR 循环，包含测试反模式参考</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Debugging -->
+        <div class="reveal glass-card p-6">
+          <div class="flex items-center gap-3 mb-5">
+            <div class="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/12 flex items-center justify-center">
+              <svg class="w-5 h-5 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </div>
+            <h3 class="font-display font-semibold text-white">调试</h3>
+          </div>
+          <div class="space-y-3">
+            <div class="p-4 rounded-xl" style="background:rgba(6,8,15,0.5)">
+              <div class="flex items-start gap-3">
+                <span class="skill-tag bg-rose-500/12 text-rose-400 border border-rose-500/15 mt-0.5 flex-shrink-0">debug</span>
+                <div>
+                  <p class="text-[0.85rem] text-white font-medium">systematic-debugging</p>
+                  <p class="text-xs mt-1 leading-relaxed" style="color:var(--c-text-muted)">4 阶段根本原因流程，含追踪、纵深防御、条件等待技术</p>
+                </div>
+              </div>
+            </div>
+            <div class="p-4 rounded-xl" style="background:rgba(6,8,15,0.5)">
+              <div class="flex items-start gap-3">
+                <span class="skill-tag bg-rose-500/12 text-rose-400 border border-rose-500/15 mt-0.5 flex-shrink-0">verify</span>
+                <div>
+                  <p class="text-[0.85rem] text-white font-medium">verification-before-completion</p>
+                  <p class="text-xs mt-1 leading-relaxed" style="color:var(--c-text-muted)">确保问题真正被修复</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Collaboration -->
+        <div class="reveal glass-card p-6 md:col-span-2">
+          <div class="flex items-center gap-3 mb-5">
+            <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/12 flex items-center justify-center">
+              <svg class="w-5 h-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            </div>
+            <h3 class="font-display font-semibold text-white">协作</h3>
+          </div>
+          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div class="p-3.5 rounded-xl flex items-start gap-3" style="background:rgba(6,8,15,0.5)">
+              <span class="skill-tag bg-amber-500/12 text-amber-400 border border-amber-500/15 mt-0.5 flex-shrink-0">plan</span>
+              <div><p class="text-[0.82rem] text-white font-medium">brainstorming</p><p class="text-[0.7rem] mt-0.5" style="color:var(--c-text-dim)">苏格拉底式设计精炼</p></div>
+            </div>
+            <div class="p-3.5 rounded-xl flex items-start gap-3" style="background:rgba(6,8,15,0.5)">
+              <span class="skill-tag bg-indigo-500/12 text-indigo-400 border border-indigo-500/15 mt-0.5 flex-shrink-0">plan</span>
+              <div><p class="text-[0.82rem] text-white font-medium">writing-plans</p><p class="text-[0.7rem] mt-0.5" style="color:var(--c-text-dim)">详细实现计划</p></div>
+            </div>
+            <div class="p-3.5 rounded-xl flex items-start gap-3" style="background:rgba(6,8,15,0.5)">
+              <span class="skill-tag bg-emerald-500/12 text-emerald-400 border border-emerald-500/15 mt-0.5 flex-shrink-0">exec</span>
+              <div><p class="text-[0.82rem] text-white font-medium">executing-plans</p><p class="text-[0.7rem] mt-0.5" style="color:var(--c-text-dim)">带检查点的批量执行</p></div>
+            </div>
+            <div class="p-3.5 rounded-xl flex items-start gap-3" style="background:rgba(6,8,15,0.5)">
+              <span class="skill-tag bg-rose-500/12 text-rose-400 border border-rose-500/15 mt-0.5 flex-shrink-0">agent</span>
+              <div><p class="text-[0.82rem] text-white font-medium">dispatching-parallel-agents</p><p class="text-[0.7rem] mt-0.5" style="color:var(--c-text-dim)">并发子智能体工作流</p></div>
+            </div>
+            <div class="p-3.5 rounded-xl flex items-start gap-3" style="background:rgba(6,8,15,0.5)">
+              <span class="skill-tag bg-amber-500/12 text-amber-400 border border-amber-500/15 mt-0.5 flex-shrink-0">review</span>
+              <div><p class="text-[0.82rem] text-white font-medium">requesting-code-review</p><p class="text-[0.7rem] mt-0.5" style="color:var(--c-text-dim)">预审查检查清单</p></div>
+            </div>
+            <div class="p-3.5 rounded-xl flex items-start gap-3" style="background:rgba(6,8,15,0.5)">
+              <span class="skill-tag bg-amber-500/12 text-amber-400 border border-amber-500/15 mt-0.5 flex-shrink-0">review</span>
+              <div><p class="text-[0.82rem] text-white font-medium">receiving-code-review</p><p class="text-[0.7rem] mt-0.5" style="color:var(--c-text-dim)">响应反馈</p></div>
+            </div>
+            <div class="p-3.5 rounded-xl flex items-start gap-3" style="background:rgba(6,8,15,0.5)">
+              <span class="skill-tag bg-emerald-500/12 text-emerald-400 border border-emerald-500/15 mt-0.5 flex-shrink-0">git</span>
+              <div><p class="text-[0.82rem] text-white font-medium">using-git-worktrees</p><p class="text-[0.7rem] mt-0.5" style="color:var(--c-text-dim)">并行开发分支</p></div>
+            </div>
+            <div class="p-3.5 rounded-xl flex items-start gap-3" style="background:rgba(6,8,15,0.5)">
+              <span class="skill-tag bg-emerald-500/12 text-emerald-400 border border-emerald-500/15 mt-0.5 flex-shrink-0">git</span>
+              <div><p class="text-[0.82rem] text-white font-medium">finishing-a-development-branch</p><p class="text-[0.7rem] mt-0.5" style="color:var(--c-text-dim)">合并/PR 决策工作流</p></div>
+            </div>
+            <div class="p-3.5 rounded-xl flex items-start gap-3" style="background:rgba(6,8,15,0.5)">
+              <span class="skill-tag bg-rose-500/12 text-rose-400 border border-rose-500/15 mt-0.5 flex-shrink-0">agent</span>
+              <div><p class="text-[0.82rem] text-white font-medium">subagent-driven-development</p><p class="text-[0.7rem] mt-0.5" style="color:var(--c-text-dim)">两阶段审查的快速迭代</p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Meta -->
+        <div class="reveal glass-card p-6 md:col-span-2">
+          <div class="flex items-center gap-3 mb-5">
+            <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/12 flex items-center justify-center">
+              <svg class="w-5 h-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </div>
+            <h3 class="font-display font-semibold text-white">元技能</h3>
+          </div>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="p-4 rounded-xl flex items-start gap-3" style="background:rgba(6,8,15,0.5)">
+              <span class="skill-tag bg-amber-500/12 text-amber-400 border border-amber-500/15 mt-0.5 flex-shrink-0">meta</span>
+              <div><p class="text-[0.85rem] text-white font-medium">writing-skills</p><p class="text-xs mt-1 leading-relaxed" style="color:var(--c-text-muted)">遵循最佳实践创建新技能，包含测试方法论</p></div>
+            </div>
+            <div class="p-4 rounded-xl flex items-start gap-3" style="background:rgba(6,8,15,0.5)">
+              <span class="skill-tag bg-amber-500/12 text-amber-400 border border-amber-500/15 mt-0.5 flex-shrink-0">meta</span>
+              <div><p class="text-[0.85rem] text-white font-medium">using-superpowers</p><p class="text-xs mt-1 leading-relaxed" style="color:var(--c-text-muted)">技能系统介绍</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ Philosophy ═══════════════ -->
+  <section id="philosophy" class="py-24 md:py-32 px-5 sm:px-8 section-glow">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-16 reveal">
+        <span class="text-[0.7rem] font-mono tracking-[0.2em] uppercase" style="color:var(--c-accent-light)">Philosophy</span>
+        <h2 class="font-display font-bold text-3xl md:text-4xl mt-4 text-white">核心理念</h2>
+        <p class="mt-4 text-sm" style="color:var(--c-text-muted)">四条不可妥协的原则</p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div class="reveal glass-card philo-card philo-glow-green p-7 text-center group">
+          <div class="w-14 h-14 rounded-2xl bg-emerald-500/8 flex items-center justify-center mx-auto mb-5 group-hover:bg-emerald-500/15 transition-colors border border-emerald-500/8">
+            <svg class="w-6 h-6 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="font-display font-semibold text-white mb-2 text-[0.95rem]">测试驱动</h3>
+          <p class="text-xs leading-relaxed" style="color:var(--c-text-muted)">始终先编写测试，代码为测试服务</p>
+        </div>
+        <div class="reveal glass-card philo-card philo-glow-indigo p-7 text-center group">
+          <div class="w-14 h-14 rounded-2xl bg-indigo-500/8 flex items-center justify-center mx-auto mb-5 group-hover:bg-indigo-500/15 transition-colors border border-indigo-500/8">
+            <svg class="w-6 h-6 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg>
+          </div>
+          <h3 class="font-display font-semibold text-white mb-2 text-[0.95rem]">系统优于临时</h3>
+          <p class="text-xs leading-relaxed" style="color:var(--c-text-muted)">流程优于猜测，结构化地解决问题</p>
+        </div>
+        <div class="reveal glass-card philo-card philo-glow-amber p-7 text-center group">
+          <div class="w-14 h-14 rounded-2xl bg-amber-500/8 flex items-center justify-center mx-auto mb-5 group-hover:bg-amber-500/15 transition-colors border border-amber-500/8">
+            <svg class="w-6 h-6 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <h3 class="font-display font-semibold text-white mb-2 text-[0.95rem]">降低复杂性</h3>
+          <p class="text-xs leading-relaxed" style="color:var(--c-text-muted)">简单性作为主要目标，YAGNI 原则</p>
+        </div>
+        <div class="reveal glass-card philo-card philo-glow-rose p-7 text-center group">
+          <div class="w-14 h-14 rounded-2xl bg-rose-500/8 flex items-center justify-center mx-auto mb-5 group-hover:bg-rose-500/15 transition-colors border border-rose-500/8">
+            <svg class="w-6 h-6 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+          </div>
+          <h3 class="font-display font-semibold text-white mb-2 text-[0.95rem]">证据优于声明</h3>
+          <p class="text-xs leading-relaxed" style="color:var(--c-text-muted)">在宣布成功前验证，用结果说话</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ Contribute / Update / Sponsor ═══════════════ -->
+  <section class="py-24 md:py-32 px-5 sm:px-8 section-glow">
+    <div class="max-w-4xl mx-auto">
+      <div class="grid md:grid-cols-5 gap-6">
+
+        <!-- Contribute -->
+        <div class="reveal glass-card p-8 md:col-span-3">
+          <h3 class="font-display font-bold text-xl text-white mb-2">参与贡献</h3>
+          <p class="text-sm mb-6 leading-relaxed" style="color:var(--c-text-muted)">技能直接存储在仓库中，欢迎贡献你的技能。</p>
+          <ol class="space-y-4 text-[0.85rem]" style="color:var(--c-text-muted)">
+            <li class="flex items-center gap-3.5">
+              <span class="w-7 h-7 rounded-lg bg-indigo-500/10 border border-indigo-500/12 flex items-center justify-center text-indigo-400 font-mono text-xs font-semibold flex-shrink-0">1</span>
+              Fork 本仓库
+            </li>
+            <li class="flex items-center gap-3.5">
+              <span class="w-7 h-7 rounded-lg bg-indigo-500/10 border border-indigo-500/12 flex items-center justify-center text-indigo-400 font-mono text-xs font-semibold flex-shrink-0">2</span>
+              为你的技能创建分支
+            </li>
+            <li class="flex items-center gap-3.5">
+              <span class="w-7 h-7 rounded-lg bg-indigo-500/10 border border-indigo-500/12 flex items-center justify-center text-indigo-400 font-mono text-xs font-semibold flex-shrink-0">3</span>
+              遵循 <code class="text-indigo-400 font-mono text-xs">writing-skills</code> 技能创建和测试
+            </li>
+            <li class="flex items-center gap-3.5">
+              <span class="w-7 h-7 rounded-lg bg-indigo-500/10 border border-indigo-500/12 flex items-center justify-center text-indigo-400 font-mono text-xs font-semibold flex-shrink-0">4</span>
+              提交 Pull Request
+            </li>
+          </ol>
+        </div>
+
+        <!-- Update + Sponsor -->
+        <div class="md:col-span-2 space-y-6">
+          <div class="reveal glass-card p-7">
+            <h3 class="font-display font-bold text-lg text-white mb-3">更新</h3>
+            <p class="text-sm mb-4 leading-relaxed" style="color:var(--c-text-muted)">更新插件时技能会自动更新：</p>
+            <div class="code-box p-4 font-mono text-xs">
+              <code><span class="text-indigo-400">/plugin update</span> <span class="text-emerald-400">superpowers</span></code>
+            </div>
+          </div>
+
+          <div class="reveal glass-card p-7" style="border-color: rgba(251,191,36,0.1)">
+            <h3 class="font-display font-bold text-lg mb-3">
+              <span class="gradient-text-warm">赞助</span>
+            </h3>
+            <p class="text-sm leading-relaxed mb-5" style="color:var(--c-text-muted)">
+              如果 Superpowers 帮助你完成了有价值的工作，欢迎赞助开源开发。
+            </p>
+            <a href="https://github.com/sponsors/obra" target="_blank" rel="noopener"
+               class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-amber-500/12 to-rose-500/8 text-amber-400 hover:from-amber-500/20 hover:to-rose-500/15 transition-all text-sm font-medium border border-amber-500/15 hover:border-amber-500/25">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              赞助 Jesse
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ Footer ═══════════════ -->
+  <footer class="border-t border-white/5 py-14 px-5 sm:px-8">
+    <div class="max-w-5xl mx-auto">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-xl bg-indigo-500/10 border border-indigo-500/10 flex items-center justify-center">
+            <svg class="w-4 h-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <div>
+            <span class="font-display font-semibold text-sm text-white/70">Superpowers</span>
+            <span class="text-xs ml-2" style="color:var(--c-text-dim)">MIT License</span>
+          </div>
+        </div>
+        <div class="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm" style="color:var(--c-text-dim)">
+          <a href="https://github.com/obra/superpowers" target="_blank" class="hover:text-white transition-colors">GitHub</a>
+          <a href="https://github.com/obra/superpowers/issues" target="_blank" class="hover:text-white transition-colors">问题反馈</a>
+          <a href="https://github.com/obra/superpowers-marketplace" target="_blank" class="hover:text-white transition-colors">插件市场</a>
+          <a href="https://blog.fsck.com/2025/10/09/superpowers/" target="_blank" class="hover:text-white transition-colors">博客</a>
+        </div>
+      </div>
+      <p class="text-center mt-8 text-xs" style="color:var(--c-text-dim)">
+        汉化来源：<a href="https://github.com/obra/superpowers" target="_blank" class="text-indigo-400/60 hover:text-indigo-400 transition-colors">github.com/obra/superpowers</a>
+      </p>
+    </div>
+  </footer>
+
+  <!-- ═══════════════ Scripts ═══════════════ -->
+  <script>
+    // Mobile menu
+    const mobBtn = document.getElementById('mob-btn');
+    const mobMenu = document.getElementById('mob-menu');
+    mobBtn.addEventListener('click', () => mobMenu.classList.toggle('hidden'));
+    mobMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobMenu.classList.add('hidden')));
+
+    // Nav shrink on scroll
+    const nav = document.getElementById('nav');
+    let lastScroll = 0;
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY;
+      if (y > 80) {
+        nav.style.borderBottom = '1px solid rgba(99,102,241,0.06)';
+      } else {
+        nav.style.borderBottom = 'none';
+      }
+      lastScroll = y;
+    }, { passive: true });
+
+    // Scroll reveal with stagger
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          const siblings = entry.target.parentElement?.querySelectorAll('.reveal');
+          if (siblings && siblings.length > 1) {
+            let idx = 0;
+            siblings.forEach(s => {
+              if (s.getBoundingClientRect().top > 0 && !s.classList.contains('visible')) {
+                setTimeout(() => s.classList.add('visible'), idx * 80);
+                idx++;
+              }
+            });
+          }
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -60px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // Copy button for code blocks
+    function copyCode(btn) {
+      const codeBox = btn.closest('.code-box');
+      const code = codeBox.querySelector('code');
+      const text = code.innerText.replace(/^#.*$/gm, '').trim();
+      navigator.clipboard.writeText(text).then(() => {
+        btn.innerHTML = '<svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>';
+        btn.style.color = 'var(--c-emerald)';
+        setTimeout(() => {
+          btn.innerHTML = '<svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>';
+          btn.style.color = '';
+        }, 2000);
+      });
+    }
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
